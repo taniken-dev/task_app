@@ -6,6 +6,8 @@ from flask_login import logout_user
 from flask_login import LoginManager, current_user, login_user
 from flask_migrate import Migrate
 from flask import jsonify
+from datetime import datetime
+
 import os  # 環境変数を使うために追加
 
 app = Flask(__name__)
@@ -100,18 +102,21 @@ def index():  # 　　を担当する関数index()
 @app.route("/create", methods=["POST"])
 @login_required
 def create():
+    # 文字列を Python の日時オブジェクトに変換
+    deadline_str = request.form["deadline"]
+    try:
+        # "2026-03-17T01:37" のような形式を想定
+        deadline_dt = datetime.strptime(deadline_str, '%Y-%m-%dT%H:%M')
+    except ValueError:
+        # 形式が違う場合の予備設定
+        deadline_dt = datetime.now()
+
     task = Task(
         user_id=current_user.id,
         name=request.form["name"],
-        deadline=request.form["deadline"],
+        deadline=deadline_dt, # 変換したオブジェクトを渡す
         is_shared=request.form.get("is_shared") is not None,
     )
-    if request.form["name"] == "" or request.form["deadline"] == "":
-        flash("入力されていない項目があります")
-    else:
-        db.session.add(task)
-        db.session.commit()
-    return redirect("/")
 
 
 @app.route("/update/<int:id>", methods=["GET", "POST"])
