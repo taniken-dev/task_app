@@ -8,9 +8,9 @@ from flask_migrate import Migrate
 from flask import jsonify
 import os  # 環境変数を使うために追加
 
-from models import Task, User, db
-
 app = Flask(__name__)
+
+from models import Task, User, db
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///app.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
