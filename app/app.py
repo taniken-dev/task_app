@@ -12,14 +12,10 @@ from models import Task, User, db
 
 app = Flask(__name__)
 
-# 修正前
-# app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://db_user:db_password@db/app_db"
-
-# 修正後（Render/本番環境用）
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///app.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-# 前回の修正と同様に、db.init_app(app) の直後に以下を追加
+
 with app.app_context():
     db.create_all()
 
