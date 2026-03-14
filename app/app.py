@@ -12,17 +12,14 @@ from models import Task, User, db
 
 app = Flask(__name__)
 
-# --- 【修正ポイント1】 データベース接続先の設定 ---
-# Render(本番)では SQLite を使い、ローカル(Docker)の設定と切り分けます
+# 修正前
+# app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://db_user:db_password@db/app_db"
+
+# 修正後（Render/本番環境用）
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///app.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-app.secret_key = "deadbeef"
-db.init_app(app)
-# Migrate(app, db) # Render上では一旦コメントアウトでもOKです
-
-# --- 【修正ポイント2】 テーブルの自動作成 ---
-# これを追加することで、起動時に自動で DB ファイルとテーブルが作られます
+# 前回の修正と同様に、db.init_app(app) の直後に以下を追加
 with app.app_context():
     db.create_all()
 
