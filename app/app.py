@@ -1,33 +1,46 @@
 from random import choice, random
-
 from flask import flash
-from flask import Flask, render_template, redirect, request  # Flaskクラスの読み込み
+from flask import Flask, render_template, redirect, request
 from flask_login import login_required
 from flask_login import logout_user
 from flask_login import LoginManager, current_user, login_user
 from flask_migrate import Migrate
 from flask import jsonify
+import os  # 環境変数を使うために追加
 
 from models import Task, User, db
 
-app = Flask(__name__)  # Flaskクラスの実態を作成
-with app.app_context():
-    db.create_all()
-app.config["SQLALCHEMY_DATABASE_URI"] = (
-    "mysql+pymysql://db_user:db_password@db/app_db"
-)
+app = Flask(__name__)
+
+# --- 【修正ポイント1】 データベース接続先の設定 ---
+# Render(本番)では SQLite を使い、ローカル(Docker)の設定と切り分けます
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///app.db"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
 app.secret_key = "deadbeef"
 db.init_app(app)
-Migrate(app, db)
+# Migrate(app, db) # Render上では一旦コメントアウトでもOKです
+
+# --- 【修正ポイント2】 テーブルの自動作成 ---
+# これを追加することで、起動時に自動で DB ファイルとテーブルが作られます
+with app.app_context():
+    db.create_all()
 
 login_manager = LoginManager()
 login_manager.login_view = "login"
 login_manager.init_app(app)
 
-
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(user_id)
+
+# --- 以下、ルート定義（register, login 等）は変更なし ---
+# (中略)
+
+if __name__ == "__main__":
+    # Renderは環境変数 PORT を指定してくるため、それに合わせます
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
 
 
 @app.route("/register", methods=["GET", "POST"])
