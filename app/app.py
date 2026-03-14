@@ -11,6 +11,8 @@ from flask import jsonify
 from models import Task, User, db
 
 app = Flask(__name__)  # Flaskクラスの実態を作成
+with app.app_context():
+    db.create_all()
 app.config["SQLALCHEMY_DATABASE_URI"] = (
     "mysql+pymysql://db_user:db_password@db/app_db"
 )
