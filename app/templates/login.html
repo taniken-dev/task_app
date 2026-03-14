@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="d-flex align-items-center justify-content-center" style="height: 20vh;">
+    <h1><strong><font size="6" face="alial black" color="blue">タスク管理アプリ</font></strong></h1>
+</div>
+<div class="d-flex align-items-center justify-content-center" style="height: 20vh;">
+    <h1><strong><font size="6" face="alial black" color="blue">{{ title }}</font></strong></h1>
+</div>
+    <div class="d-flex align-items-center justify-content-center">
+        <form action="/login" method="post" class="bg-info bg-opacity-10 border border-info">
+            <div class="mx-auto p-2 row">
+                <div class="col-auto">
+                    <div class="form-floating">
+                        <input class="form-control" type="text" name="id" id="id" placeholder="ユーザIDを入力...">
+                        <label for="id" class="col-form-label">ユーザID</label>
+                    </div>
+                </div>
+            </div>
+            <div class="mx-auto p-2 row">
+                <div class="col-auto">
+                    <div class="form-floating">
+                        <input class="form-control" type="password" name="password" id="password" placeholder="パスワードを入力...">
+                        <label for="password" class="col-form-label">パスワード</label>
+                    </div>
+                </div>
+            </div>
+            <div class="mx-auto p-2 justify-content-center row">
+                <div class="col-auto">
+                    <p><input class="btn btn-primary" type="submit" value="ログイン"></p>
+                </div>
+            </div>
+            <div class="justify-content-center row">  
+                <div class="col-auto">
+                    <p><a href="/register">新規ユーザー登録</a></p>
+                </div>
+            </div>
+        </form>
+    </div>
+</span>
+{% endblock content %}

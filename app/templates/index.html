@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+{% block content %}
+
+<form action="/create" method="post">
+    <div class="row">
+        <div class="col">
+            <div class="form-floating">
+                <input class="form-control" type="text" name="name" id="name" placeholder="タスク名を入力...">
+                <label for="name" class="col-form-label">タスク名</label>
+            </div>
+        </div>
+        <div class="col-auto">
+            <div class="form-floating">
+                <input class="form-control" type="datetime-local" name="deadline" id="deadline">
+                <label for="deadline" class="col-form-label">締切日時</label>
+            </div>
+        </div>
+        <div class="col-auto">
+            <input class="form-check-input" type="checkbox" name="is_shared" id="is_shared">
+            <label for="is_shared" class="form-check-label">共有する</label>
+            <input class="form-control btn btn-primary" type="submit" value="作成">
+        </div>
+    </div>
+</form>
+
+<h2 style="text-align:center">私のタスク</h2>
+<table id="sortable_table" border="1" style="border-collapse: collapse" class="table table-striped table-hover">
+    <thead>
+        <tr>
+            <th data-type="number">id <span class="sort-arrow"></span></th>
+            <th>タスク名</th>
+            <th data-type="number">締切日時 <span class="sort-arrow"></span></th>
+            <th>共有</th>
+            <th>作成日時</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for task in my_tasks: %}
+        <tr>
+            <td>{{ task.id }}</td>
+            <td>{{ task.name }}</td>
+            <td>{{ task.deadline }}</td>
+            <td>
+                {% if task.is_shared: %}
+                <span class="badge text-bg-primary">✓</span>
+                {% endif %}
+            </td>
+            <td>{{ task.created_at }}</td>
+            <td>
+                <a href="/update/{{ task.id }}"><button class="btn btn-outline-primary btn-sm">更新</button></a>
+                <a href="/delete/{{ task.id }}"><button class="btn btn-outline-warning btn-sm">削除</button></a>
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="6">表示する情報がありません</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h2 style="text-align:center">共有タスク</h2>
+<table id="sortable_table" border="1" style="border-collapse: collapse" class="table table-striped table-hover">
+    <thead>
+        <tr>
+            <th>id </th>
+            <th>タスク名 </th>
+            <th data-type="number">締切日時 <span class="sort-arrow"></span></th>
+            <th>共有</th>
+            <th data-type="number">作成日時 <span class="sort-arrow"></span></th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for task in shared_tasks %}
+        <tr>
+            <td>{{ task.id }}</td>
+            <td>{{ task.user_id }}</td>
+            <td>{{ task.name }}</td>
+            <td>{{ task.deadline }}</td>
+            <td>{{ task.created_at}}</td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="5">表示する情報がありません</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<script>
+    // テーブルをソートする関数
+    function sortTable(table, col, reverse) {
+        // テーブルのtbodyを取得
+        // tbody内のすべての行を配列に変換
+        var tbody = table.tBodies[0];
+        var tr = Array.prototype.slice.call(tbody.rows);
+        
+        // 行をソート
+        tr.sort(function(a, b) {
+            // 各行の指定列の値を取得し、数値として比較
+            var adateArray = a.cells[col].textContent.split("-");
+            var ayear = parseInt(adateArray[0]);
+            var amonth = parseInt(adateArray[1]); 
+            var aday = parseInt(adateArray[2]); 
+            // 年、月、日を文字列として連結
+            var aValue = ayear * 10000 + amonth * 100 + aday;
+
+            var bdateArray = b.cells[col].textContent.split("-");
+            var byear = parseInt(bdateArray[0]);
+            var bmonth = parseInt(bdateArray[1]);  
+            var bday = parseInt(bdateArray[2]);    
+
+            var bValue = byear * 10000 + bmonth* 100 + bday;
+            // 昇順または降順でソート
+            return reverse ? bValue - aValue : aValue - bValue;
+        });
+        // ソートされた行をテーブルに再配置
+        tr.forEach(function(row) {
+            tbody.appendChild(row);
+        });
+    }
+    // テーブルのヘッダーをクリック可能にする関数
+    function makeSortable(table) {
+        // テーブル内のすべてのヘッダーセルを取得
+        var headers = table.querySelectorAll('th');
+        
+        // 各ヘッダーにクリックイベントを追加
+        headers.forEach(function(header, index) {
+            header.addEventListener('click', function() {
+                // ヘッダーが既に昇順ソートされているか確認
+                var isAsc = header.classList.contains('sorted-asc');
+                // 他のヘッダーのソート状態をリセット
+                resetSortIndicators(headers);
+                // 昇順の場合は降順にソート、それ以外は昇順にソート
+                if (isAsc) {
+                    sortTable(table, index, true); // 降順
+                    header.classList.add('sorted-desc'); // 降順のクラスを追加
+                } else {
+                    sortTable(table, index, false); // 昇順
+                    header.classList.add('sorted-asc'); // 昇順のクラスを追加
+                }
+            });
+        });
+    }
+    // すべてのヘッダーのソート状態をリセットする関数
+    function resetSortIndicators(headers) {
+        // 各ヘッダーからソートクラスを削除
+        headers.forEach(function(header) {
+            header.classList.remove('sorted-asc', 'sorted-desc');
+        });
+    }
+    // ページが読み込まれたら、テーブルをソート可能にする
+    document.addEventListener('DOMContentLoaded', function() {
+        makeSortable(document.getElementById('sortable_table'));
+    });
+</script>
+{% endblock content %}

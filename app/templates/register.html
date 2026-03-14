@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex align-items-center justify-content-center" style="height: 20vh;">
+    <h1>{{ title }}</h1>
+</div>
+<div class="d-flex align-items-center justify-content-center">
+    <form action="/register" method="post" class="bg-info bg-opacity-10 border border-info">
+        <div class="mx-auto p-2 row">
+            <div class="col-auto">
+                <div class="form-floating">
+                    <input class="form-control" type="text" name="id" id="id" placeholder="ユーザIDを入力...">
+                    <label for="id" class="col-form-label">ユーザID</label>
+                </div>
+            </div>
+        </div>
+        <div class="mx-auto p-2 row">
+            <div class="col-auto">
+                <div class="form-floating">
+                    <input class="form-control" type="password" name="password" id="password" placeholder="パスワードを入力...">
+                    <label for="password" class="col-form-label">パスワード</label>
+                </div>
+            </div>
+        </div>
+        <div class="mx-auto p-2 row">
+            <div class="col-auto">
+                <div class="form-floating">
+                    <input class="form-control" type="text" name="lastname" id="lastname" placeholder="姓を入力...">
+                    <label for="lastname" class="col-form-label">姓</label>
+                </div>
+            </div>
+        </div>
+        <div class="mx-auto p-2 row">
+            <div class="col-auto">
+                <div class="form-floating">
+                    <input class="form-control" type="text" name="firstname" id="firstname" placeholder="名を入力...">
+                    <label for="firstname" class="col-form-label">名</label><br>
+                </div>
+            </div>
+        </div>
+        <div class="mx-auto p-2 justify-content-center row">
+            <div class="col-auto">
+                <input class="btn btn-primary" type="submit" value="登録">
+            </div>
+            <div class="col-auto">
+                <a href="/login"><button type="button" class="btn btn-outline-primary">戻る</button></a>
+            </div>
+        </div>
+</div>
+</form>
+{% endblock content %}
