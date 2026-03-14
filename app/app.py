@@ -117,6 +117,10 @@ def create():
         deadline=deadline_dt, # 変換したオブジェクトを渡す
         is_shared=request.form.get("is_shared") is not None,
     )
+        db.session.add(task)
+        db.session.commit()
+    return redirect("/")
+
 
 
 @app.route("/update/<int:id>", methods=["GET", "POST"])
