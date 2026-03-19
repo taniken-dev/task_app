@@ -38,8 +38,6 @@ def add_header(response):
 def load_user(user_id):
     return User.query.get(user_id)
 
-# --- 以下、ルート定義（register, login 等）は変更なし ---
-# (中略)
 
 if __name__ == "__main__":
     # Renderは環境変数 PORT を指定してくるため、それに合わせます
