@@ -8,7 +8,7 @@ from flask_migrate import Migrate
 from flask import jsonify
 from datetime import datetime
 
-import os  # 環境変数を使うために追加
+import os  
 
 app = Flask(__name__)
 
