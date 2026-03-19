@@ -147,7 +147,12 @@ def update(id):
         return render_template("update.html", title="更新", task=task)
     else:
         task.name = request.form["name"]
-        task.deadline = request.form["deadline"]
+        deadline_str = request.form.get("deadline")
+        if deadline_str:
+            task.deadline = datetime.strptime(deadline_str, '%Y-%m-%dT%H:%M')
+        else:
+            task.deadline = None
+        
         task.is_shared = request.form.get("is_shared") is not None
         task.user_id = current_user.id
         if task.user_id is None:
