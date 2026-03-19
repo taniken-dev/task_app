@@ -17,6 +17,10 @@ from models import Task, User, db
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:////tmp/app.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.secret_key = "deadbeef"
+app.config.update(
+    SESSION_COOKIE_SAMESITE='None',
+    SESSION_COOKIE_SECURE=True
+)
 db.init_app(app)
 with app.app_context():
     db.create_all()
@@ -25,6 +29,11 @@ login_manager = LoginManager()
 login_manager.login_view = "login"
 login_manager.init_app(app)
 
+@app.after_request
+def add_header(response):
+    response.headers['X-Frame-Options'] = 'ALLOWALL'
+    return response
+    
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(user_id)
