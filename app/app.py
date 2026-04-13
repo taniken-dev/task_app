@@ -16,7 +16,7 @@ from models import Task, User, db
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:////tmp/app.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.secret_key = "deadbeef"
+app.secret_key = os.environ.get("SECRET_KEY", "deadbeef")
 app.config.update(
     SESSION_COOKIE_SAMESITE='None',
     SESSION_COOKIE_SECURE=True
